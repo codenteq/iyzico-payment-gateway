@@ -1,5 +1,6 @@
 # Iyzico Payment Gateway
-[![License](https://poser.pugx.org/bagisto/bagisto-gdpr/license)](https://github.com/ahmetarsiv/iyzico-payment-gateway/blob/master/LICENSE)
+[![License](https://poser.pugx.org/ahmetarsiv/iyzico-payment-gateway/license)](https://github.com/ahmetarsiv/iyzico-payment-gateway/blob/master/LICENSE)
+<a href="https://packagist.org/packages/ahmetarsiv/iyzico-payment-gateway"><img src="https://poser.pugx.org/ahmetarsiv/iyzico-payment-gateway/d/total.svg" alt="Total Downloads"></a>
 
 ## 1. Introduction:
 
@@ -7,47 +8,82 @@ Install this package now to receive secure payments in your online store. Iyzico
 
 ## 2. Requirements:
 
-* **PHP**: 7.3 or higher.
+* **PHP**: 8.0 or higher.
 * **Bagisto**: v1.4.*
 * **Composer**: 1.6.5 or higher.
 
 ## 3. Installation:
 
-Create packages/Webkul/IyzicoPayment/ folders then follow the steps below
-~~~
-composer require iyzico/iyzipay-php
-~~~
+- Run the following command
+```
+composer require ahmetarsiv/iyzico-payment-gateway
+```
 
-> Open ‘app.php’ file inside ‘config’ folder & add your service provider inside the ‘providers’ array.
-~~~
-Webkul\IyzicoPayment\Providers\IyzicoPaymentServiceProvider::class,
-~~~
-
-> Goto ‘composer.json’ file and add following line under psr-4
-~~~
-"Webkul\\IyzicoPayment\\": "packages/Webkul/IyzicoPayment/src"
-~~~
-
-~~~
+- Run these commands below to complete the setup
+```
 composer dump-autoload
-~~~
+```
+
+> WARNING <br>
+> It will check existence of the .env file, if it exists then please update the file manually with the below details.
+```
+API_KEY
+SECRET_KEY
+BASE_URL
+```
+
+- Run these commands below to complete the setup
+```
+php artisan optimize
+```
 
 > Copy the callback code to app/Http/Middlware/VerifyCsrfToken.php protected
 ~~~
 'iyzico-callback'
 ~~~
 
-~~~
-php artisan route:cache
-~~~
+## Installation without composer:
 
-~~~
+- Unzip the respective extension zip and then merge "packages" and "storage" folders into project root directory.
+- Goto config/app.php file and add following line under 'providers'
+
+```
+Webkul\IyzicoPayment\Providers\IyzicoPaymentServiceProvider::class,
+```
+
+- Goto composer.json file and add following line under 'psr-4'
+
+```
+"Webkul\\IyzicoPayment\\": "packages/Webkul/IyzicoPayment/src"
+```
+
+- Run these commands below to complete the setup
+
+```
 composer dump-autoload
+```
+
+> WARNING <br>
+> It will check existence of the .env file, if it exists then please update the file manually with the below details.
+```
+API_KEY
+SECRET_KEY
+BASE_URL
+```
+
+```
+php artisan optimize
+```
+
+> Copy the callback code to app/Http/Middlware/VerifyCsrfToken.php protected
+~~~
+'iyzico-callback'
 ~~~
 
-### License
-Iyzico payment gateway is always safe! [MIT License](https://github.com/Arsivpro/iyzico-payment-gateway/blob/main/LICENSE).
+> That's it, now just execute the project on your specified domain.
 
-Thank you to all our backers! 🙏
+## Contributors
 
-<a href="https://opencollective.com/arsivpro#contributors" target="_blank"><img src="https://opencollective.com/arsivpro/backers.svg?width=890"></a>
+This project is on [Open Collective](https://opencollective.com/arsivpro), and it exists thanks to the people who contribute.
+
+<a href="https://github.com/ahmetarsiv/iyzico-payment-gateway/graphs/contributors"><img src="https://opencollective.com/arsivpro/backers.svg?width=890"/></a>
