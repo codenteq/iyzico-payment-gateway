@@ -27,9 +27,9 @@ composer dump-autoload
 > WARNING <br>
 > It will check existence of the .env file, if it exists then please update the file manually with the below details.
 ```
-API_KEY
-SECRET_KEY
-BASE_URL
+IYZICO_API_KEY
+IYZICO_SECRET_KEY
+IYZICO_BASE_URL
 ```
 
 - Run these commands below to complete the setup
@@ -66,9 +66,9 @@ composer dump-autoload
 > WARNING <br>
 > It will check existence of the .env file, if it exists then please update the file manually with the below details.
 ```
-API_KEY
-SECRET_KEY
-BASE_URL
+IYZICO_API_KEY
+IYZICO_SECRET_KEY
+IYZICO_BASE_URL
 ```
 
 ```
