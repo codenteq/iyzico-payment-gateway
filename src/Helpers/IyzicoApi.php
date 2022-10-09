@@ -11,9 +11,9 @@ class IyzicoApi
 {
     public static function options() {
         $options = new \Iyzipay\Options();
-        $options->setApiKey("api-key");
-        $options->setSecretKey("secret-key");
-        $options->setBaseUrl("https://sandbox-api.iyzipay.com");
+        $options->setApiKey("env('API_KEY')");
+        $options->setSecretKey("env('SECRET_KEY')");
+        $options->setBaseUrl("env('BASE_URL')");
         return $options;
     }
 }
