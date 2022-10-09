@@ -1,0 +1,34 @@
+{
+  "name": "ahmetarsiv/iyzico-payment-gateway",
+  "description": "The Laravel eCommerce Iyzico Payment Gateway",
+  "keywords": [
+    "bagisto",
+    "payment",
+    "ecommerce",
+    "iyzico"
+  ],
+  "minimum-stability": "dev",
+  "homepage": "https://github.com/ahmetarsivi/iyzico-payment-gateway",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ahmet Sefa ARŞİV",
+      "email": "ahmetarsivi@gmail.com",
+      "homepage": "https://arsivpro.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Webkul\\IyzicoPayment\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Webkul\\IyzicoPayment\\Providers\\IyzicoPaymentServiceProvider"
+      ],
+      "aliases": {}
+    }
+  }
+}
