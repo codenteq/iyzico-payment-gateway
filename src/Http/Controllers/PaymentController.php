@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Webkul\IyzicoPayment\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -11,7 +10,6 @@ use Webkul\IyzicoPayment\Helpers\IyzicoApi;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\IyzicoPayment\Helpers\Ipn;
 use Webkul\Shop\Http\Controllers\Controller;
-
 
 class PaymentController
 {
@@ -32,13 +30,13 @@ class PaymentController
     /**
      * Create a new controller instance.
      *
-     * @param  \Webkul\Attribute\Repositories\OrderRepository  $orderRepository
-     * @param  \Webkul\IyzicoPayment\Helpers\Ipn  $ipnHelper
+     * @param \Webkul\Attribute\Repositories\OrderRepository $orderRepository
+     * @param \Webkul\IyzicoPayment\Helpers\Ipn $ipnHelper
      * @return void
      */
     public function __construct(
         OrderRepository $orderRepository,
-        Ipn $ipnHelper
+        Ipn             $ipnHelper
     )
     {
         $this->orderRepository = $orderRepository;
@@ -46,17 +44,18 @@ class PaymentController
         $this->ipnHelper = $ipnHelper;
     }
 
-    public function redirect(Request $request) {
+    public function redirect(Request $request)
+    {
         $cart = Cart::getCart();
         $address = $cart->billing_address;
         $user = Customer::find($cart->customer_id);
 
         $requestIyzico = new \Iyzipay\Request\CreateCheckoutFormInitializeRequest();
-        $requestIyzico->setLocale(\Iyzipay\Model\Locale::TR);
+        $requestIyzico->setLocale(app()->getLocale());
         $requestIyzico->setConversationId(rand());
-        $requestIyzico->setPrice(number_format($cart['base_sub_total'],'2','.',''));
-        $requestIyzico->setPaidPrice(number_format($cart['base_grand_total'],'2','.',''));
-        $requestIyzico->setCurrency(\Iyzipay\Model\Currency::TL);
+        $requestIyzico->setPrice(number_format($cart['base_sub_total'], '2', '.', ''));
+        $requestIyzico->setPaidPrice(number_format($cart['base_grand_total'], '2', '.', ''));
+        $requestIyzico->setCurrency($cart['cart_currency_code']);
         $requestIyzico->setBasketId("B67832");
         $requestIyzico->setPaymentGroup(\Iyzipay\Model\PaymentGroup::PRODUCT);
         $requestIyzico->setCallbackUrl(route('iyzico.callback'));
@@ -69,8 +68,8 @@ class PaymentController
         $buyer->setGsmNumber($address->phone);
         $buyer->setEmail($address->email);
         $buyer->setIdentityNumber(rand());
-        $buyer->setLastLoginDate((string) $cart->created_at);
-        $buyer->setRegistrationDate((string) $user->created_at);
+        $buyer->setLastLoginDate((string)$cart->created_at);
+        $buyer->setRegistrationDate((string)$user->created_at);
         $buyer->setRegistrationAddress($address->address1);
         $buyer->setIp($request->ip());
         $buyer->setCity($address->state);
@@ -104,7 +103,7 @@ class PaymentController
             $BasketItem->setCategory1("Teknoloji");
             $BasketItem->setCategory2("Bilgisayar");
             $BasketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL);
-            $BasketItem->setPrice(number_format($product['total'],'2','.',''));
+            $BasketItem->setPrice(number_format($product['total'], '2', '.', ''));
             $basketItems[$products] = $BasketItem;
             $products++;
         }
@@ -113,13 +112,13 @@ class PaymentController
         $checkoutFormInitialize = \Iyzipay\Model\CheckoutFormInitialize::create($requestIyzico, IyzicoApi::options());
         $paymentForm = $checkoutFormInitialize->getCheckoutFormContent();
 
-        return view('iyzico::iyzico-form',compact('paymentForm'));
+        return view('iyzico::iyzico-form', compact('paymentForm'));
     }
 
-
-    public function callback(Request $request) {
+    public function callback(Request $request)
+    {
         $requestIyzico = new \Iyzipay\Request\RetrieveCheckoutFormRequest();
-        $requestIyzico->setLocale(\Iyzipay\Model\Locale::TR);
+        $requestIyzico->setLocale(app()->getLocale());
         $requestIyzico->setToken($request->token);
         $checkoutForm = \Iyzipay\Model\CheckoutForm::retrieve($requestIyzico, IyzicoApi::options());
 
@@ -130,7 +129,8 @@ class PaymentController
         }
     }
 
-    public function success() {
+    public function success()
+    {
         $order = $this->orderRepository->create(Cart::prepareDataForOrder());
 
         Cart::deActivateCart();
@@ -139,5 +139,4 @@ class PaymentController
 
         return redirect()->route('shop.checkout.success');
     }
-
 }
