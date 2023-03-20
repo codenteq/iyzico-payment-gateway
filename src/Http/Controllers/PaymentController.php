@@ -73,7 +73,7 @@ class PaymentController
         $buyer->setRegistrationAddress($address->address1);
         $buyer->setIp($request->ip());
         $buyer->setCity($address->state);
-        $buyer->setCountry($address->country);
+        $buyer->setCountry("TR");
         $buyer->setZipCode($address->postcode);
 
         $requestIyzico->setBuyer($buyer);
