@@ -40,7 +40,7 @@
             "type": "github",
             "url": "https://github.com/sponsors/codenteq"
         }
-    ]
+    ],
     "autoload": {
         "psr-4": {
             "Webkul\\IyzicoPayment\\": "src"
