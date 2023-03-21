@@ -1,6 +1,6 @@
 # Iyzico Payment Gateway
-[![License](https://poser.pugx.org/ahmetarsiv/iyzico-payment-gateway/license)](https://github.com/ahmetarsiv/iyzico-payment-gateway/blob/master/LICENSE)
-<a href="https://packagist.org/packages/ahmetarsiv/iyzico-payment-gateway"><img src="https://poser.pugx.org/ahmetarsiv/iyzico-payment-gateway/d/total.svg" alt="Total Downloads"></a>
+[![License](https://poser.pugx.org/codenteq/iyzico-payment-gateway/license)](https://github.com/codenteq/iyzico-payment-gateway/blob/master/LICENSE)
+<a href="https://packagist.org/packages/codenteq/iyzico-payment-gateway"><img src="https://poser.pugx.org/codenteq/iyzico-payment-gateway/d/total.svg" alt="Total Downloads"></a>
 
 ## 1. Introduction:
 
@@ -16,7 +16,7 @@ Install this package now to receive secure payments in your online store. Iyzico
 
 - Run the following command
 ```
-composer require ahmetarsiv/iyzico-payment-gateway
+composer require codenteq/iyzico-payment-gateway
 ```
 
 - Run these commands below to complete the setup
@@ -81,9 +81,3 @@ php artisan optimize
 ~~~
 
 > That's it, now just execute the project on your specified domain.
-
-## Contributors
-
-This project is on [Open Collective](https://opencollective.com/arsivpro), and it exists thanks to the people who contribute.
-
-<a href="https://github.com/ahmetarsiv/iyzico-payment-gateway/graphs/contributors"><img src="https://opencollective.com/arsivpro/backers.svg?width=890"/></a>
