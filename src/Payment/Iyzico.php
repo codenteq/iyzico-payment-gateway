@@ -1,17 +1,17 @@
 <?php
 
-namespace Webkul\IyzicoPayment\Payment;
+namespace Webkul\Iyzico\Payment;
 
 use Webkul\Payment\Payment\Payment;
 
-class IyzicoPayment extends Payment
+class Iyzico extends Payment
 {
     /**
      * Payment method code
      *
      * @var string
      */
-    protected $code  = 'iyzicopayment';
+    protected $code  = 'iyzico';
 
     public function getRedirectUrl()
     {

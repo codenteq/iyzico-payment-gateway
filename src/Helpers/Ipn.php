@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Webkul\IyzicoPayment\Helpers;
+namespace Webkul\Iyzico\Helpers;
 
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Repositories\InvoiceRepository;

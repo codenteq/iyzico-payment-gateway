@@ -1,14 +1,14 @@
 <?php
 
-namespace Webkul\IyzicoPayment\Http\Controllers;
+namespace Webkul\Iyzico\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Models\Customer;
-use Webkul\IyzicoPayment\Helpers\IycizoApi;
-use Webkul\IyzicoPayment\Helpers\IyzicoApi;
+use Webkul\Iyzico\Helpers\IycizoApi;
+use Webkul\Iyzico\Helpers\IyzicoApi;
 use Webkul\Sales\Repositories\OrderRepository;
-use Webkul\IyzicoPayment\Helpers\Ipn;
+use Webkul\Iyzico\Helpers\Ipn;
 use Webkul\Shop\Http\Controllers\Controller;
 
 class PaymentController
@@ -23,7 +23,7 @@ class PaymentController
     /**
      * Ipn object
      *
-     * @var \Webkul\IyzicoPayment\Helpers\Ipn
+     * @var \Webkul\Iyzico\Helpers\Ipn
      */
     protected $ipnHelper;
 
@@ -31,7 +31,7 @@ class PaymentController
      * Create a new controller instance.
      *
      * @param \Webkul\Attribute\Repositories\OrderRepository $orderRepository
-     * @param \Webkul\IyzicoPayment\Helpers\Ipn $ipnHelper
+     * @param \Webkul\Iyzico\Helpers\Ipn $ipnHelper
      * @return void
      */
     public function __construct(

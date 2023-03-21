@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Webkul\IyzicoPayment\Http\Controllers\PaymentController;
+use Webkul\Iyzico\Http\Controllers\PaymentController;
 
 Route::group(['middleware' => ['web']], function () {
 

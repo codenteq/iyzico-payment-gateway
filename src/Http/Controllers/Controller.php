@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Webkul\IyzicoPayment\Http\Controllers;
+namespace Webkul\Iyzico\Http\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;

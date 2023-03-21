@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'iyzicopayment'  => [
-        'code'        => 'iyzicopayment',
-        'title'       => 'Debit or Credit Card',
+    'iyzico'  => [
+        'code'        => 'iyzico',
+        'title'       => 'Iyzico',
         'description' => 'Iyzico',
-        'class'       => 'Webkul\IyzicoPayment\Payment\IyzicoPayment',
+        'class'       => 'Webkul\Iyzico\Payment\Iyzico',
         'active'      => true,
         'sort'        => 1,
     ],
