@@ -1,6 +1,6 @@
 # Iyzico Payment Gateway
 [![License](https://poser.pugx.org/codenteq/iyzico-payment-gateway/license)](https://github.com/codenteq/iyzico-payment-gateway/blob/master/LICENSE)
-<a href="https://packagist.org/packages/codenteq/iyzico-payment-gateway"><img src="https://poser.pugx.org/codenteq/iyzico-payment-gateway/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/codenteq/iyzico-payment-gateway"><img src="https://poser.pugx.org/codenteq/iyzico-payment-gateway/d/total" alt="Total Downloads"></a>
 
 ## 1. Introduction:
 
