@@ -38,7 +38,7 @@
     "funding": [
         {
             "type": "github",
-            "url": "https://github.com/sponsors/codenteq",
+            "url": "https://github.com/sponsors/codenteq"
         }
     ]
     "autoload": {
