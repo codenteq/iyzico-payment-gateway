@@ -1,10 +1,10 @@
 <?php
 
-namespace Webkul\IyzicoPayment\Providers;
+namespace Webkul\Iyzico\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class IyzicoPaymentServiceProvider extends ServiceProvider
+class IyzicoServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.

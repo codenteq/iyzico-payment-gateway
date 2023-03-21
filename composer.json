@@ -43,13 +43,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Webkul\\IyzicoPayment\\": "src"
+            "Webkul\\Iyzico\\": "src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Webkul\\IyzicoPayment\\Providers\\IyzicoPaymentServiceProvider"
+                "Webkul\\Iyzico\\Providers\\IyzicoServiceProvider"
             ],
             "aliases": {}
         }

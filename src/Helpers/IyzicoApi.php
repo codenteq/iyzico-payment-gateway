@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Webkul\IyzicoPayment\Helpers;
+namespace Webkul\Iyzico\Helpers;
 
 /**
  * Iyzico payment api and secret key

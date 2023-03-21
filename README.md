@@ -48,13 +48,13 @@ php artisan optimize
 - Goto config/app.php file and add following line under 'providers'
 
 ```
-Webkul\IyzicoPayment\Providers\IyzicoPaymentServiceProvider::class,
+Webkul\Iyzico\Providers\IyzicoServiceProvider::class,
 ```
 
 - Goto composer.json file and add following line under 'psr-4'
 
 ```
-"Webkul\\IyzicoPayment\\": "packages/Webkul/IyzicoPayment/src"
+"Webkul\\Iyzico\\": "packages/Webkul/Iyzico/src"
 ```
 
 - Run these commands below to complete the setup
