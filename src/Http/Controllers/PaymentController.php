@@ -2,16 +2,16 @@
 
 namespace Webkul\Iyzico\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Models\Customer;
-use Webkul\Iyzico\Helpers\IycizoApi;
-use Webkul\Iyzico\Helpers\IyzicoApi;
+use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
+use Webkul\Iyzico\Helpers\IyzicoApi;
 use Webkul\Iyzico\Helpers\Ipn;
-use Webkul\Shop\Http\Controllers\Controller;
 
-class PaymentController
+class PaymentController extends Controller
 {
     /**
      * OrderRepository object
@@ -30,21 +30,26 @@ class PaymentController
     /**
      * Create a new controller instance.
      *
-     * @param \Webkul\Attribute\Repositories\OrderRepository $orderRepository
+     * @param \Webkul\Sales\Repositories\OrderRepository $orderRepository
+     * @param \Webkul\Sales\Repositories\InvoiceRepository $invoiceRepository
      * @param \Webkul\Iyzico\Helpers\Ipn $ipnHelper
-     * @return void
      */
-    public function __construct(
-        OrderRepository $orderRepository,
-        Ipn             $ipnHelper
-    )
+    public function __construct(OrderRepository $orderRepository, InvoiceRepository $invoiceRepository, Ipn $ipnHelper)
     {
         $this->orderRepository = $orderRepository;
-
+        $this->invoiceRepository = $invoiceRepository;
         $this->ipnHelper = $ipnHelper;
     }
 
-    public function redirect(Request $request)
+    /**
+     * Redirects to the Iyzico server.
+     *
+     * \Illuminate\Contracts\View\View
+     * \Illuminate\Foundation\Application
+     * \Illuminate\Contracts\View\Factory
+     * \Illuminate\Contracts\Foundation\Application
+     */
+    public function redirect(Request $request): \Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
     {
         $cart = Cart::getCart();
         $address = $cart->billing_address;
@@ -72,23 +77,23 @@ class PaymentController
         $buyer->setRegistrationDate((string)$user->created_at);
         $buyer->setRegistrationAddress($address->address1);
         $buyer->setIp($request->ip());
-        $buyer->setCity($address->state);
-        $buyer->setCountry("TR");
+        $buyer->setCity($address->city);
+        $buyer->setCountry($address->country);
         $buyer->setZipCode($address->postcode);
 
         $requestIyzico->setBuyer($buyer);
         $shippingAddress = new \Iyzipay\Model\Address();
         $shippingAddress->setContactName($cart->customer_first_name . ' ' . $cart->customer_last_name);
-        $shippingAddress->setCity($address->state);
-        $shippingAddress->setCountry($address->city);
+        $shippingAddress->setCity($address->city);
+        $shippingAddress->setCountry($address->country);
         $shippingAddress->setAddress($address->address1);
         $shippingAddress->setZipCode($address->postcode);
         $requestIyzico->setShippingAddress($shippingAddress);
 
         $billingAddress = new \Iyzipay\Model\Address();
         $billingAddress->setContactName($cart->customer_first_name . ' ' . $cart->customer_last_name);
-        $billingAddress->setCity($address->state);
-        $billingAddress->setCountry($address->city);
+        $billingAddress->setCity($address->city);
+        $billingAddress->setCountry($address->country);
         $billingAddress->setAddress($address->address1);
         $billingAddress->setZipCode($address->postcode);
         $requestIyzico->setBillingAddress($billingAddress);
@@ -115,7 +120,12 @@ class PaymentController
         return view('iyzico::iyzico-form', compact('paymentForm'));
     }
 
-    public function callback(Request $request)
+    /**
+     * Redirects to the Iyzico server.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function callback(Request $request): RedirectResponse
     {
         $requestIyzico = new \Iyzipay\Request\RetrieveCheckoutFormRequest();
         $requestIyzico->setLocale(app()->getLocale());
@@ -129,14 +139,55 @@ class PaymentController
         }
     }
 
-    public function success()
+    /**
+     * Place an order and redirect to the success page.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function success(): RedirectResponse
     {
         $order = $this->orderRepository->create(Cart::prepareDataForOrder());
+
+        $this->orderRepository->update(['status' => 'processing'], $order->id);
+
+        if ($order->canInvoice()) {
+            $this->invoiceRepository->create($this->prepareInvoiceData($order));
+        }
 
         Cart::deActivateCart();
 
         session()->flash('order', $order);
 
-        return redirect()->route('shop.checkout.success');
+        return redirect()->route('shop.checkout.onepage.success');
+    }
+
+    /**
+     * Redirect to the cart page with error message.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function failure(): RedirectResponse
+    {
+        session()->flash('error', 'Iyzico payment was either cancelled or the transaction failed.');
+        return redirect()->route('shop.checkout.cart.index');
+    }
+
+    /**
+     * Prepares order's invoice data for creation.
+     *
+     * @return array
+     */
+    protected function prepareInvoiceData($order): array
+    {
+        $invoiceData = [
+            'order_id' => $order->id,
+            'invoice' => ['items' => []],
+        ];
+
+        foreach ($order->items as $item) {
+            $invoiceData['invoice']['items'][$item->id] = $item->qty_to_invoice;
+        }
+
+        return $invoiceData;
     }
 }

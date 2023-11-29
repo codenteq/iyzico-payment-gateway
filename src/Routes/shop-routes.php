@@ -13,5 +13,7 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/iyzico-success', [PaymentController::class, 'success'])->name('iyzico.success');
 
+    Route::get('/iyzico-cancel', [PaymentController::class, 'failure'])->name('iyzico.cancel');
+
     Route::post('/iyzico-callback', [PaymentController::class, 'callback'])->name('iyzico.callback');
 });

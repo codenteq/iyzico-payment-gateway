@@ -7,6 +7,6 @@ return [
         'description' => 'Iyzico',
         'class'       => 'Webkul\Iyzico\Payment\Iyzico',
         'active'      => true,
-        'sort'        => 1,
+        'sort'        => 0,
     ],
 ];

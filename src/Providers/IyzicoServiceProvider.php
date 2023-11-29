@@ -11,7 +11,7 @@ class IyzicoServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/../Routes/shop-routes.php');
 
@@ -25,7 +25,7 @@ class IyzicoServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
     }
@@ -35,10 +35,10 @@ class IyzicoServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/paymentmethods.php', 'paymentmethods'
+            dirname(__DIR__) . '/Config/paymentmethods.php', 'payment_methods'
         );
 
         $this->mergeConfigFrom(
