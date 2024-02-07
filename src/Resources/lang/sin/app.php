@@ -10,6 +10,7 @@ return [
         'system' => [
             'title'         => 'සිරිසේන',
             'description'   => 'විස්තරය',
+            'image'         => 'ලොගෝ',
             'status'        => 'ස්ථාපනය',
         ],
     ],

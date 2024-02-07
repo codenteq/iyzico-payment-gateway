@@ -10,6 +10,7 @@ return [
         'system' => [
             'title'         => 'Заголовок',
             'description'   => 'Описание',
+            'image'         => 'Логотип',
             'status'        => 'Статус',
         ],
     ],

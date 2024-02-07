@@ -10,6 +10,7 @@ return [
         'system' => [
             'title'         => '标题',
             'description'   => '描述',
+            'image'         => '标志',
             'status'        => '状态',
         ],
     ],

@@ -10,6 +10,7 @@ return [
         'system' => [
             'title'         => 'العنوان',
             'description'   => 'الوصف',
+            'image'         => 'لوجو',
             'status'        => 'الحالة',
         ],
     ],

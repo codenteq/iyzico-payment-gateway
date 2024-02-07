@@ -10,6 +10,7 @@ return [
         'system' => [
             'title'         => 'শিরোনাম',
             'description'   => 'বিবরণ',
+            'image'         => 'লোগো',
             'status'        => 'অবস্থা',
         ],
     ],
