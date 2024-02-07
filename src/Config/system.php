@@ -21,12 +21,18 @@ return [
                 'channel_based' => false,
                 'locale_based'  => true,
             ], [
+                'name'          => 'image',
+                'title'         => 'iyzico::app.iyzico.system.image',
+                'type'          => 'file',
+                'channel_based' => false,
+                'locale_based'  => true,
+            ], [
                 'name'          => 'active',
                 'title'         => 'iyzico::app.iyzico.system.status',
                 'type'          => 'boolean',
                 'channel_based' => false,
                 'locale_based'  => true,
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];

@@ -8,7 +8,6 @@ Route::group(['middleware' => ['web']], function () {
     /**
      * Iyzico payment routes
      */
-
     Route::get('/iyzico-redirect', [PaymentController::class, 'redirect'])->name('iyzico.redirect');
 
     Route::get('/iyzico-success', [PaymentController::class, 'success'])->name('iyzico.success');

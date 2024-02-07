@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" dir="{{ core()->getCurrentLocale()->direction }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="base-url" content="{{ url()->to('/') }}">
+    <meta name="currency-code" content="{{ core()->getCurrentCurrencyCode() }}">
     <meta http-equiv="content-language" content="{{ app()->getLocale() }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <title>{{ __('iyzico::app.resources.title') }}</title>
 
-    @if ($favicon = core()->getCurrentChannel()->favicon_url)
-        <link rel="icon" sizes="16x16" href="{{ $favicon }}"/>
-    @else
-        <link rel="icon" sizes="16x16" href="{{ asset('/themes/velocity/assets/images/static/v-icon.png') }}"/>
-    @endif
+    <link
+        rel="icon"
+        sizes="16x16"
+        href="{{ core()->getCurrentChannel()->favicon_url }}"
+    />
 </head>
 <body>
 {!! $paymentForm !!}
-<div id="iyzipay-checkout-form" class="responsive"></div>
+<div id="iyzipay-checkout-form" class="responsive"/>
 </body>
 </html>

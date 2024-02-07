@@ -1,53 +1,42 @@
 <?php
 
-
 namespace Webkul\Iyzico\Helpers;
 
-use Webkul\Sales\Repositories\OrderRepository;
+use Webkul\Sales\Contracts\Order;
 use Webkul\Sales\Repositories\InvoiceRepository;
+use Webkul\Sales\Repositories\OrderRepository;
 
 class Ipn
 {
     /**
      * Ipn post data
-     *
-     * @var array
      */
-    protected $post;
+    protected array $post;
 
     /**
      * Order object
-     *
-     * @var \Webkul\Sales\Contracts\Order
      */
-    protected $order;
+    protected Order $order;
 
     /**
      * OrderRepository object
-     *
-     * @var \Webkul\Sales\Repositories\OrderRepository
      */
-    protected $orderRepository;
+    protected OrderRepository $orderRepository;
 
     /**
      * InvoiceRepository object
-     *
-     * @var \Webkul\Sales\Repositories\InvoiceRepository
      */
-    protected $invoiceRepository;
+    protected InvoiceRepository $invoiceRepository;
 
     /**
      * Create a new helper instance.
      *
-     * @param  \Webkul\Sales\Repositories\OrderRepository  $orderRepository
-     * @param  \Webkul\Sales\Repositories\InvoiceRepository  $invoiceRepository
      * @return void
      */
     public function __construct(
         OrderRepository $orderRepository,
         InvoiceRepository $invoiceRepository
-    )
-    {
+    ) {
         $this->orderRepository = $orderRepository;
 
         $this->invoiceRepository = $invoiceRepository;
@@ -55,11 +44,8 @@ class Ipn
 
     /**
      * This function process the ipn sent from iyzico end
-     *
-     * @param  array  $post
-     * @return null|void|\Exception
      */
-    public function processIpn($post)
+    public function processIpn(array $post): void
     {
         $this->post = $post;
 
@@ -68,7 +54,7 @@ class Ipn
         }
 
         try {
-            if (isset($this->post['txn_type']) && 'recurring_payment' == $this->post['txn_type']) {
+            if (isset($this->post['txn_type']) && $this->post['txn_type'] == 'recurring_payment') {
 
             } else {
                 $this->getOrder();
@@ -82,10 +68,8 @@ class Ipn
 
     /**
      * Load order via ipn invoice id
-     *
-     * @return void
      */
-    protected function getOrder()
+    protected function getOrder(): void
     {
         if (empty($this->order)) {
             $this->order = $this->orderRepository->findOneByField(['cart_id' => $this->post['invoice']]);
@@ -94,10 +78,8 @@ class Ipn
 
     /**
      * Process order and create invoice
-     *
-     * @return void
      */
-    protected function processOrder()
+    protected function processOrder(): void
     {
         if ($this->post['payment_status'] == 'Completed') {
             if ($this->post['mc_gross'] != $this->order->grand_total) {
@@ -114,13 +96,11 @@ class Ipn
 
     /**
      * Prepares order's invoice data for creation
-     *
-     * @return array
      */
-    protected function prepareInvoiceData()
+    protected function prepareInvoiceData(): array
     {
         $invoiceData = [
-            "order_id" => $this->order->id,
+            'order_id' => $this->order->id,
         ];
 
         foreach ($this->order->items as $item) {

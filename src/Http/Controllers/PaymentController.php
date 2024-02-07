@@ -6,10 +6,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Models\Customer;
+use Webkul\Iyzico\Helpers\Ipn;
+use Webkul\Iyzico\Helpers\IyzicoApi;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
-use Webkul\Iyzico\Helpers\IyzicoApi;
-use Webkul\Iyzico\Helpers\Ipn;
 
 class PaymentController extends Controller
 {
@@ -29,10 +29,6 @@ class PaymentController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @param \Webkul\Sales\Repositories\OrderRepository $orderRepository
-     * @param \Webkul\Sales\Repositories\InvoiceRepository $invoiceRepository
-     * @param \Webkul\Iyzico\Helpers\Ipn $ipnHelper
      */
     public function __construct(OrderRepository $orderRepository, InvoiceRepository $invoiceRepository, Ipn $ipnHelper)
     {
@@ -61,10 +57,10 @@ class PaymentController extends Controller
         $requestIyzico->setPrice(number_format($cart['base_sub_total'], '2', '.', ''));
         $requestIyzico->setPaidPrice(number_format($cart['base_grand_total'], '2', '.', ''));
         $requestIyzico->setCurrency($cart['cart_currency_code']);
-        $requestIyzico->setBasketId("B67832");
+        $requestIyzico->setBasketId($cart['id']);
         $requestIyzico->setPaymentGroup(\Iyzipay\Model\PaymentGroup::PRODUCT);
         $requestIyzico->setCallbackUrl(route('iyzico.callback'));
-        $requestIyzico->setEnabledInstallments(array(2, 3, 6, 9));
+        $requestIyzico->setEnabledInstallments([2, 3, 6, 9]);
 
         $buyer = new \Iyzipay\Model\Buyer();
         $buyer->setId($cart->id);
@@ -73,8 +69,8 @@ class PaymentController extends Controller
         $buyer->setGsmNumber($address->phone);
         $buyer->setEmail($address->email);
         $buyer->setIdentityNumber(rand());
-        $buyer->setLastLoginDate((string)$cart->created_at);
-        $buyer->setRegistrationDate((string)$user->created_at);
+        $buyer->setLastLoginDate((string) $cart->created_at);
+        $buyer->setRegistrationDate((string) $user->created_at);
         $buyer->setRegistrationAddress($address->address1);
         $buyer->setIp($request->ip());
         $buyer->setCity($address->city);
@@ -83,7 +79,7 @@ class PaymentController extends Controller
 
         $requestIyzico->setBuyer($buyer);
         $shippingAddress = new \Iyzipay\Model\Address();
-        $shippingAddress->setContactName($cart->customer_first_name . ' ' . $cart->customer_last_name);
+        $shippingAddress->setContactName($cart->customer_first_name.' '.$cart->customer_last_name);
         $shippingAddress->setCity($address->city);
         $shippingAddress->setCountry($address->country);
         $shippingAddress->setAddress($address->address1);
@@ -91,22 +87,21 @@ class PaymentController extends Controller
         $requestIyzico->setShippingAddress($shippingAddress);
 
         $billingAddress = new \Iyzipay\Model\Address();
-        $billingAddress->setContactName($cart->customer_first_name . ' ' . $cart->customer_last_name);
+        $billingAddress->setContactName($cart->customer_first_name.' '.$cart->customer_last_name);
         $billingAddress->setCity($address->city);
         $billingAddress->setCountry($address->country);
         $billingAddress->setAddress($address->address1);
         $billingAddress->setZipCode($address->postcode);
         $requestIyzico->setBillingAddress($billingAddress);
 
-
-        $basketItems = array();
+        $basketItems = [];
         $products = 0;
         foreach ($cart['items'] as $product) {
             $BasketItem = new \Iyzipay\Model\BasketItem();
             $BasketItem->setId($product->id);
             $BasketItem->setName($product->name);
-            $BasketItem->setCategory1("Teknoloji");
-            $BasketItem->setCategory2("Bilgisayar");
+            $BasketItem->setCategory1($product->getTypeInstance()->isStockable() ? 'PHYSICAL_GOODS' : 'DIGITAL_GOODS');
+            $BasketItem->setCategory2($product->getTypeInstance()->isStockable() ? 'PHYSICAL_GOODS' : 'DIGITAL_GOODS');
             $BasketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL);
             $BasketItem->setPrice(number_format($product['total'], '2', '.', ''));
             $basketItems[$products] = $BasketItem;
@@ -116,14 +111,14 @@ class PaymentController extends Controller
 
         $checkoutFormInitialize = \Iyzipay\Model\CheckoutFormInitialize::create($requestIyzico, IyzicoApi::options());
         $paymentForm = $checkoutFormInitialize->getCheckoutFormContent();
+        $paymentPageUrl = $checkoutFormInitialize->getPaymentPageUrl().'&iframe=true';
+        $checkoutFormInitialize->setPaymentPageUrl($paymentPageUrl);
 
         return view('iyzico::iyzico-form', compact('paymentForm'));
     }
 
     /**
      * Redirects to the Iyzico server.
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function callback(Request $request): RedirectResponse
     {
@@ -141,8 +136,6 @@ class PaymentController extends Controller
 
     /**
      * Place an order and redirect to the success page.
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function success(): RedirectResponse
     {
@@ -163,25 +156,22 @@ class PaymentController extends Controller
 
     /**
      * Redirect to the cart page with error message.
-     *
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function failure(): RedirectResponse
     {
         session()->flash('error', 'Iyzico payment was either cancelled or the transaction failed.');
+
         return redirect()->route('shop.checkout.cart.index');
     }
 
     /**
      * Prepares order's invoice data for creation.
-     *
-     * @return array
      */
     protected function prepareInvoiceData($order): array
     {
         $invoiceData = [
             'order_id' => $order->id,
-            'invoice' => ['items' => []],
+            'invoice'  => ['items' => []],
         ];
 
         foreach ($order->items as $item) {

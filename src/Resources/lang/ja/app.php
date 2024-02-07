@@ -10,6 +10,7 @@ return [
         'system' => [
             'title'         => 'タイトル',
             'description'   => '説明',
+            'image'         => 'ロゴ',
             'status'        => 'ステータス',
         ],
     ],
