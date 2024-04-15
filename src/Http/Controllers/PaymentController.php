@@ -14,27 +14,16 @@ use Webkul\Sales\Repositories\OrderRepository;
 class PaymentController extends Controller
 {
     /**
-     * OrderRepository object
-     *
-     * @var \Webkul\Sales\Repositories\OrderRepository
-     */
-    protected $orderRepository;
-
-    /**
-     * Ipn object
-     *
-     * @var \Webkul\Iyzico\Helpers\Ipn
-     */
-    protected $ipnHelper;
-
-    /**
      * Create a new controller instance.
+     *
+     * @return void
      */
-    public function __construct(OrderRepository $orderRepository, InvoiceRepository $invoiceRepository, Ipn $ipnHelper)
-    {
-        $this->orderRepository = $orderRepository;
-        $this->invoiceRepository = $invoiceRepository;
-        $this->ipnHelper = $ipnHelper;
+    public function __construct(
+        protected OrderRepository $orderRepository,
+        protected InvoiceRepository $invoiceRepository,
+        protected Ipn $ipnHelper
+    ) {
+        //
     }
 
     /**
@@ -71,7 +60,7 @@ class PaymentController extends Controller
         $buyer->setIdentityNumber(rand());
         $buyer->setLastLoginDate((string) $cart->created_at);
         $buyer->setRegistrationDate((string) $user->created_at);
-        $buyer->setRegistrationAddress($address->address1);
+        $buyer->setRegistrationAddress($address->address);
         $buyer->setIp($request->ip());
         $buyer->setCity($address->city);
         $buyer->setCountry($address->country);
@@ -82,7 +71,7 @@ class PaymentController extends Controller
         $shippingAddress->setContactName($cart->customer_first_name.' '.$cart->customer_last_name);
         $shippingAddress->setCity($address->city);
         $shippingAddress->setCountry($address->country);
-        $shippingAddress->setAddress($address->address1);
+        $shippingAddress->setAddress($address->address);
         $shippingAddress->setZipCode($address->postcode);
         $requestIyzico->setShippingAddress($shippingAddress);
 
@@ -90,7 +79,7 @@ class PaymentController extends Controller
         $billingAddress->setContactName($cart->customer_first_name.' '.$cart->customer_last_name);
         $billingAddress->setCity($address->city);
         $billingAddress->setCountry($address->country);
-        $billingAddress->setAddress($address->address1);
+        $billingAddress->setAddress($address->address);
         $billingAddress->setZipCode($address->postcode);
         $requestIyzico->setBillingAddress($billingAddress);
 
