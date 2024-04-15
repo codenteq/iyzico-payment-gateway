@@ -1,3 +1,5 @@
+<p align="center"><a href="https://codenteq.com" target="_blank"><img src="src/Resources/assets/images/iyzico.svg" width="288"></a></p>
+
 # Iyzico Payment Gateway
 [![License](https://poser.pugx.org/codenteq/iyzico-payment-gateway/license)](https://github.com/codenteq/iyzico-payment-gateway/blob/master/LICENSE)
 <a href="https://packagist.org/packages/codenteq/iyzico-payment-gateway"><img src="https://poser.pugx.org/codenteq/iyzico-payment-gateway/d/total" alt="Total Downloads"></a>
