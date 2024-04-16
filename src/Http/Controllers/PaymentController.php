@@ -10,6 +10,7 @@ use Webkul\Iyzico\Helpers\Ipn;
 use Webkul\Iyzico\Helpers\IyzicoApi;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
+use Webkul\Sales\Transformers\OrderResource;
 
 class PaymentController extends Controller
 {
@@ -125,12 +126,18 @@ class PaymentController extends Controller
 
     /**
      * Place an order and redirect to the success page.
+     *
+     * @throws \Exception
      */
     public function success(): RedirectResponse
     {
-        $order = $this->orderRepository->create(Cart::prepareDataForOrder());
+        Cart::collectTotals();
 
-        $this->orderRepository->update(['status' => 'processing'], $order->id);
+        $cart = Cart::getCart();
+
+        $data = (new OrderResource($cart))->jsonSerialize();
+
+        $order = $this->orderRepository->create($data);
 
         if ($order->canInvoice()) {
             $this->invoiceRepository->create($this->prepareInvoiceData($order));

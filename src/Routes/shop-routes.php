@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Webkul\Iyzico\Http\Controllers\PaymentController;
 
@@ -14,5 +15,6 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/iyzico-cancel', [PaymentController::class, 'failure'])->name('iyzico.cancel');
 
-    Route::post('/iyzico-callback', [PaymentController::class, 'callback'])->name('iyzico.callback');
+    Route::post('/iyzico-callback', [PaymentController::class, 'callback'])->name('iyzico.callback')
+        ->withoutMiddleware(VerifyCsrfToken::class);
 });
