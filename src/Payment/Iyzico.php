@@ -24,6 +24,6 @@ class Iyzico extends Payment
     {
         $url = $this->getConfigData('image');
 
-        return Storage::url($url);
+        return $url ? Storage::url($url) : bagisto_asset('images/iyzico.svg', 'iyzico');
     }
 }
