@@ -19,11 +19,13 @@ class Iyzico extends Payment
 
     /**
      * Returns payment method image
+     *
+     * @return string
      */
     public function getImage(): string
     {
         $url = $this->getConfigData('image');
 
-        return Storage::url($url);
+        return $url ? Storage::url($url) : bagisto_asset('images/iyzico.svg', 'iyzico');
     }
 }
