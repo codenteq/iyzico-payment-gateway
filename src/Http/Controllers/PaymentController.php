@@ -131,8 +131,6 @@ class PaymentController extends Controller
      */
     public function success(): RedirectResponse
     {
-        Cart::collectTotals();
-
         $cart = Cart::getCart();
 
         $data = (new OrderResource($cart))->jsonSerialize();
