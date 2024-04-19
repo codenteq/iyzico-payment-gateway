@@ -16,6 +16,8 @@ class IyzicoServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'iyzico');
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'iyzico');
+
+        $this->app->register(EventServiceProvider::class);
     }
 
     /**

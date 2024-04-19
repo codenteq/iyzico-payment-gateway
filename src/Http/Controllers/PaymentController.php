@@ -4,10 +4,20 @@ namespace Webkul\Iyzico\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Iyzipay\Model\Address;
+use Iyzipay\Model\BasketItem;
+use Iyzipay\Model\BasketItemType;
+use Iyzipay\Model\Buyer;
+use Iyzipay\Model\CheckoutForm;
+use Iyzipay\Model\CheckoutFormInitialize;
+use Iyzipay\Model\PaymentGroup;
+use Iyzipay\Request\CreateCheckoutFormInitializeRequest;
+use Iyzipay\Request\RetrieveCheckoutFormRequest;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Customer\Models\Customer;
 use Webkul\Iyzico\Helpers\Ipn;
 use Webkul\Iyzico\Helpers\IyzicoApi;
+use Webkul\Sales\Models\OrderPayment;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Transformers\OrderResource;
@@ -41,65 +51,65 @@ class PaymentController extends Controller
         $address = $cart->billing_address;
         $user = Customer::find($cart->customer_id);
 
-        $requestIyzico = new \Iyzipay\Request\CreateCheckoutFormInitializeRequest();
+        $requestIyzico = new CreateCheckoutFormInitializeRequest();
         $requestIyzico->setLocale(app()->getLocale());
         $requestIyzico->setConversationId(rand());
         $requestIyzico->setPrice(number_format($cart['base_sub_total'], '2', '.', ''));
         $requestIyzico->setPaidPrice(number_format($cart['base_grand_total'], '2', '.', ''));
         $requestIyzico->setCurrency($cart['cart_currency_code']);
         $requestIyzico->setBasketId($cart['id']);
-        $requestIyzico->setPaymentGroup(\Iyzipay\Model\PaymentGroup::PRODUCT);
+        $requestIyzico->setPaymentGroup(PaymentGroup::PRODUCT);
         $requestIyzico->setCallbackUrl(route('iyzico.callback'));
         $requestIyzico->setEnabledInstallments([2, 3, 6, 9]);
 
-        $buyer = new \Iyzipay\Model\Buyer();
-        $buyer->setId($cart->id);
-        $buyer->setName($cart->customer_first_name);
-        $buyer->setSurname($cart->customer_last_name);
-        $buyer->setGsmNumber($address->phone);
-        $buyer->setEmail($address->email);
+        $buyer = new Buyer();
+        $buyer->setId($cart['id']);
+        $buyer->setName($cart['customer_first_name']);
+        $buyer->setSurname($cart['customer_last_name']);
+        $buyer->setGsmNumber($address['phone']);
+        $buyer->setEmail($address['email']);
         $buyer->setIdentityNumber(rand());
-        $buyer->setLastLoginDate((string) $cart->created_at);
-        $buyer->setRegistrationDate((string) $user->created_at);
-        $buyer->setRegistrationAddress($address->address);
+        $buyer->setLastLoginDate((string) $cart['created_at']);
+        $buyer->setRegistrationDate((string) $user['created_at']);
+        $buyer->setRegistrationAddress($address['address']);
         $buyer->setIp($request->ip());
-        $buyer->setCity($address->city);
-        $buyer->setCountry($address->country);
-        $buyer->setZipCode($address->postcode);
+        $buyer->setCity($address['city']);
+        $buyer->setCountry($address['country']);
+        $buyer->setZipCode($address['postcode']);
 
         $requestIyzico->setBuyer($buyer);
-        $shippingAddress = new \Iyzipay\Model\Address();
-        $shippingAddress->setContactName($cart->customer_first_name.' '.$cart->customer_last_name);
-        $shippingAddress->setCity($address->city);
-        $shippingAddress->setCountry($address->country);
-        $shippingAddress->setAddress($address->address);
-        $shippingAddress->setZipCode($address->postcode);
+        $shippingAddress = new Address();
+        $shippingAddress->setContactName($cart['customer_first_name'].' '.$cart['customer_last_name']);
+        $shippingAddress->setCity($address['city']);
+        $shippingAddress->setCountry($address['country']);
+        $shippingAddress->setAddress($address['address']);
+        $shippingAddress->setZipCode($address['postcode']);
         $requestIyzico->setShippingAddress($shippingAddress);
 
-        $billingAddress = new \Iyzipay\Model\Address();
+        $billingAddress = new Address();
         $billingAddress->setContactName($cart->customer_first_name.' '.$cart->customer_last_name);
-        $billingAddress->setCity($address->city);
-        $billingAddress->setCountry($address->country);
-        $billingAddress->setAddress($address->address);
-        $billingAddress->setZipCode($address->postcode);
+        $billingAddress->setCity($address['city']);
+        $billingAddress->setCountry($address['country']);
+        $billingAddress->setAddress($address['address']);
+        $billingAddress->setZipCode($address['postcode']);
         $requestIyzico->setBillingAddress($billingAddress);
 
         $basketItems = [];
         $products = 0;
         foreach ($cart['items'] as $product) {
-            $BasketItem = new \Iyzipay\Model\BasketItem();
-            $BasketItem->setId($product->id);
-            $BasketItem->setName($product->name);
+            $BasketItem = new BasketItem();
+            $BasketItem->setId($product['id']);
+            $BasketItem->setName($product['name']);
             $BasketItem->setCategory1($product->getTypeInstance()->isStockable() ? 'PHYSICAL_GOODS' : 'DIGITAL_GOODS');
             $BasketItem->setCategory2($product->getTypeInstance()->isStockable() ? 'PHYSICAL_GOODS' : 'DIGITAL_GOODS');
-            $BasketItem->setItemType(\Iyzipay\Model\BasketItemType::PHYSICAL);
+            $BasketItem->setItemType(BasketItemType::PHYSICAL);
             $BasketItem->setPrice(number_format($product['total'], '2', '.', ''));
             $basketItems[$products] = $BasketItem;
             $products++;
         }
         $requestIyzico->setBasketItems($basketItems);
 
-        $checkoutFormInitialize = \Iyzipay\Model\CheckoutFormInitialize::create($requestIyzico, IyzicoApi::options());
+        $checkoutFormInitialize = CheckoutFormInitialize::create($requestIyzico, IyzicoApi::options());
         $paymentForm = $checkoutFormInitialize->getCheckoutFormContent();
         $paymentPageUrl = $checkoutFormInitialize->getPaymentPageUrl().'&iframe=true';
         $checkoutFormInitialize->setPaymentPageUrl($paymentPageUrl);
@@ -112,12 +122,18 @@ class PaymentController extends Controller
      */
     public function callback(Request $request): RedirectResponse
     {
-        $requestIyzico = new \Iyzipay\Request\RetrieveCheckoutFormRequest();
+        $requestIyzico = new RetrieveCheckoutFormRequest();
         $requestIyzico->setLocale(app()->getLocale());
         $requestIyzico->setToken($request->token);
-        $checkoutForm = \Iyzipay\Model\CheckoutForm::retrieve($requestIyzico, IyzicoApi::options());
+        $checkoutForm = CheckoutForm::retrieve($requestIyzico, IyzicoApi::options());
 
         if ($checkoutForm->getPaymentStatus() == 'SUCCESS') {
+            $paymentTransactionId = $checkoutForm->getPaymentItems()[0]->getPaymentTransactionId();
+
+            if (! is_null($paymentTransactionId)) {
+                session(['payment_transaction_id' => $paymentTransactionId]);
+            }
+
             return redirect()->route('iyzico.success');
         } else {
             return redirect('/checkout/onepage');
@@ -131,13 +147,15 @@ class PaymentController extends Controller
      */
     public function success(): RedirectResponse
     {
-        Cart::collectTotals();
-
         $cart = Cart::getCart();
+
+        $this->validateOrder();
 
         $data = (new OrderResource($cart))->jsonSerialize();
 
         $order = $this->orderRepository->create($data);
+
+        $this->savePaymentTransactionId($order['id']);
 
         if ($order->canInvoice()) {
             $this->invoiceRepository->create($this->prepareInvoiceData($order));
@@ -150,6 +168,7 @@ class PaymentController extends Controller
         return redirect()->route('shop.checkout.onepage.success');
     }
 
+    /**
     /**
      * Redirect to the cart page with error message.
      */
@@ -175,5 +194,51 @@ class PaymentController extends Controller
         }
 
         return $invoiceData;
+    }
+
+    /**
+     * Validate order before creation.
+     *
+     * @throws \Exception
+     */
+    protected function validateOrder(): void
+    {
+        $cart = Cart::getCart();
+
+        $minimumOrderAmount = (float) core()->getConfigData('sales.order_settings.minimum_order.minimum_order_amount') ?: 0;
+
+        if (! $cart->checkMinimumOrder()) {
+            throw new \Exception(trans('shop::app.checkout.cart.minimum-order-message', ['amount' => core()->currency($minimumOrderAmount)]));
+        }
+
+        if (
+            $cart->haveStockableItems()
+            && ! $cart->shipping_address
+        ) {
+            throw new \Exception(trans('shop::app.checkout.cart.check-shipping-address'));
+        }
+
+        if (! $cart->billing_address) {
+            throw new \Exception(trans('shop::app.checkout.cart.check-billing-address'));
+        }
+
+        if (
+            $cart->haveStockableItems()
+            && ! $cart->selected_shipping_rate
+        ) {
+            throw new \Exception(trans('shop::app.checkout.cart.specify-shipping-method'));
+        }
+
+        if (! $cart->payment) {
+            throw new \Exception(trans('shop::app.checkout.cart.specify-payment-method'));
+        }
+    }
+
+    /**
+     * Saves the payment transaction ID to the database.
+     */
+    protected function savePaymentTransactionId(int $orderId): void
+    {
+        OrderPayment::where('order_id', $orderId)->update(['additional' => session('payment_transaction_id')]);
     }
 }

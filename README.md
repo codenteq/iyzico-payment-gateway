@@ -6,7 +6,7 @@
 
 ## 1. Introduction:
 
-Install this package now to receive secure payments in your online store. Iyzico offers an easy and secure payment gateway
+Install this package now to receive secure payments in your online store. Iyzico offers an easy and secure payment gateway.
 
 ## 2. Requirements:
 
