@@ -8,12 +8,19 @@ use Illuminate\Support\ServiceProvider;
 class EventServiceProvider extends ServiceProvider
 {
     /**
+     * The event handler mappings for the application.
+     */
+    protected array $listen = [
+        'sales.refund.save.after' => [
+            'Webkul\Iyzico\Listeners\Refund@afterCreated',
+        ],
+    ];
+
+    /**
      * Bootstrap services.
-     *
-     * @return void
      */
     public function boot(): void
     {
-        Event::listen('sales.invoice.save.after', 'Webkul\Iyzico\Listeners\Transaction@saveTransaction');
+        Event::listen('sales.refund.save.after', 'Webkul\Iyzico\Listeners\Refund@afterCreated');
     }
 }
