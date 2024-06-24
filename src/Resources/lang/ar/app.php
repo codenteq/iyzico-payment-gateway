@@ -2,6 +2,7 @@
 
 return [
     'iyzico' => [
+        'info'              => 'طريقة الدفع Iyzico خيار الدفع الآمن والسريع.',
         'name'              => 'Iyzico',
         'payment'           => 'بوابة الدفع Iyzico',
         'title'             => 'بطاقة الخصم أو الائتمان',

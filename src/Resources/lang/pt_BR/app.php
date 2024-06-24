@@ -2,6 +2,7 @@
 
 return [
     'iyzico' => [
+        'info'              => 'Método de pagamento Iyzico opção de pagamento segura e rápida.',
         'name'              => 'Iyzico',
         'payment'           => 'Gateway de pagamento Iyzico',
         'title'             => 'Cartão de débito ou crédito',

@@ -149,8 +149,6 @@ class PaymentController extends Controller
     {
         $cart = Cart::getCart();
 
-        $this->validateOrder();
-
         $data = (new OrderResource($cart))->jsonSerialize();
 
         $order = $this->orderRepository->create($data);
@@ -163,7 +161,7 @@ class PaymentController extends Controller
 
         Cart::deActivateCart();
 
-        session()->flash('order', $order);
+        session()->flash('order_id', $order->id);
 
         return redirect()->route('shop.checkout.onepage.success');
     }
@@ -194,44 +192,6 @@ class PaymentController extends Controller
         }
 
         return $invoiceData;
-    }
-
-    /**
-     * Validate order before creation.
-     *
-     * @throws \Exception
-     */
-    protected function validateOrder(): void
-    {
-        $cart = Cart::getCart();
-
-        $minimumOrderAmount = (float) core()->getConfigData('sales.order_settings.minimum_order.minimum_order_amount') ?: 0;
-
-        if (! $cart->checkMinimumOrder()) {
-            throw new \Exception(trans('shop::app.checkout.cart.minimum-order-message', ['amount' => core()->currency($minimumOrderAmount)]));
-        }
-
-        if (
-            $cart->haveStockableItems()
-            && ! $cart->shipping_address
-        ) {
-            throw new \Exception(trans('shop::app.checkout.cart.check-shipping-address'));
-        }
-
-        if (! $cart->billing_address) {
-            throw new \Exception(trans('shop::app.checkout.cart.check-billing-address'));
-        }
-
-        if (
-            $cart->haveStockableItems()
-            && ! $cart->selected_shipping_rate
-        ) {
-            throw new \Exception(trans('shop::app.checkout.cart.specify-shipping-method'));
-        }
-
-        if (! $cart->payment) {
-            throw new \Exception(trans('shop::app.checkout.cart.specify-payment-method'));
-        }
     }
 
     /**

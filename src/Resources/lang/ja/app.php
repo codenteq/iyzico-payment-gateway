@@ -2,6 +2,7 @@
 
 return [
     'iyzico' => [
+        'info'          => 'Iyzico支払い方法 安全で迅速な支払いオプション。',
         'name'          => 'Iyzico',
         'payment'       => 'Iyzico支払いゲートウェイ',
         'title'         => '銀行またはクレジットカード',
