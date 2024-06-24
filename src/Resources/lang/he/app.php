@@ -2,6 +2,7 @@
 
 return [
     'iyzico' => [
+        'info'          => 'שיטת תשלום Iyzico אפשרות תשלום בטוחה ומהירה.',
         'name'          => 'Iyzico',
         'payment'       => 'שער תשלומים Iyzico',
         'title'         => 'בנק או כרטיס אשראי',

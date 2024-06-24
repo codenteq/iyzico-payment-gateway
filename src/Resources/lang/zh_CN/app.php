@@ -2,6 +2,7 @@
 
 return [
     'iyzico' => [
+        'info'              => 'Iyzico支付方式 安全快捷的支付选择。',
         'name'              => 'Iyzico',
         'payment'           => 'Iyzico 支付网关',
         'title'             => '借记卡或信用卡',

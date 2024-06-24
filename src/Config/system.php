@@ -3,6 +3,7 @@
 return [
     [
         'key'    => 'sales.payment_methods.iyzico',
+        'info'   => 'iyzico::app.iyzico.info',
         'name'   => 'iyzico::app.iyzico.name',
         'sort'   => 0,
         'fields' => [
@@ -23,6 +24,7 @@ return [
             ], [
                 'name'          => 'image',
                 'title'         => 'iyzico::app.iyzico.system.image',
+                'info'          => 'admin::app.configuration.index.sales.payment-methods.logo-information',
                 'type'          => 'file',
                 'channel_based' => false,
                 'locale_based'  => true,
