@@ -54,8 +54,8 @@ class PaymentController extends Controller
         $requestIyzico = new CreateCheckoutFormInitializeRequest();
         $requestIyzico->setLocale(app()->getLocale());
         $requestIyzico->setConversationId(rand());
-        $requestIyzico->setPrice(number_format($cart['base_sub_total'], '2', '.', ''));
-        $requestIyzico->setPaidPrice(number_format($cart['base_grand_total'], '2', '.', ''));
+        $requestIyzico->setPrice(number_format($cart['sub_total'], '2', '.', ''));
+        $requestIyzico->setPaidPrice(number_format($cart['grand_total'], '2', '.', ''));
         $requestIyzico->setCurrency($cart['cart_currency_code']);
         $requestIyzico->setBasketId($cart['id']);
         $requestIyzico->setPaymentGroup(PaymentGroup::PRODUCT);
