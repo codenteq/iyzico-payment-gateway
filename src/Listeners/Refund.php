@@ -36,21 +36,15 @@ class Refund extends Base
         $order = $refund->order;
 
         if ($order->payment->method === 'iyzico') {
+            if ($refund->total_qty > 0) {
+                $request = new CreateRefundRequest();
+                $request->setIp(request()->ip());
+                $request->setPrice($refund->grand_total);
+                $request->setPaymentTransactionId($order->payment['additional']);
+                $request->setLocale(app()->getLocale());
+                $request->setCurrency($refund->order_currency_code);
 
-            $request = new CreateRefundRequest();
-            $request->setLocale(app()->getLocale());
-            $request->setConversationId($refund['id']);
-            $request->setPaymentTransactionId($order->payment['additional']);
-
-            $request->setPrice(number_format($refund['base_grand_total'], '2', '.', ''));
-            $request->setCurrency($refund['order_currency_code']);
-
-            $refund = RefundModel::create($request, IyzicoApi::options());
-
-            if ($refund->getStatus() === 'success') {
-                //
-            } else {
-                $errorMessage = $refund->getErrorMessage();
+                RefundModel::create($request, IyzicoApi::options());
             }
         }
     }
