@@ -18,6 +18,16 @@ class Iyzico extends Payment
     }
 
     /**
+     * Check if the payment method is available
+     */
+    public function isAvailable(): bool
+    {
+        $allowGuestCheckout = (bool) core()->getConfigData('sales.checkout.shopping_cart.allow_guest_checkout');
+
+        return $allowGuestCheckout != true;
+    }
+
+    /**
      * Returns payment method image
      */
     public function getImage(): string
