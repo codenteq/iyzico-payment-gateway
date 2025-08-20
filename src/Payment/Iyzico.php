@@ -23,8 +23,13 @@ class Iyzico extends Payment
     public function isAvailable(): bool
     {
         $allowGuestCheckout = (bool) core()->getConfigData('sales.checkout.shopping_cart.allow_guest_checkout');
+        $isActive = (bool) $this->getConfigData('active');
 
-        return $allowGuestCheckout != true;
+        if ($allowGuestCheckout || !$isActive) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
