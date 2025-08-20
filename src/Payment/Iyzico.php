@@ -23,8 +23,13 @@ class Iyzico extends Payment
     public function isAvailable(): bool
     {
         $allowGuestCheckout = (bool) core()->getConfigData('sales.checkout.shopping_cart.allow_guest_checkout');
+        $isActive = (bool) $this->getConfigData('active');
 
-        return $allowGuestCheckout != true;
+        if ($allowGuestCheckout || !$isActive) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -34,6 +39,6 @@ class Iyzico extends Payment
     {
         $url = $this->getConfigData('image');
 
-        return $url ? Storage::url($url) : bagisto_asset('images/money-transfer.png', 'shop');
+        return $url ? Storage::url($url) : asset('../packages/Webkul/Iyzico/src/Resources/assets/images/iyzico.svg');
     }
 }
