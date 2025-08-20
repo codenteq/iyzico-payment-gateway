@@ -39,6 +39,6 @@ class Iyzico extends Payment
     {
         $url = $this->getConfigData('image');
 
-        return $url ? Storage::url($url) : asset('../packages/Webkul/Iyzico/src/Resources/assets/images/iyzico.svg');
+        return $url ? Storage::url($url) : bagisto_asset('images/money-transfer.png', 'shop');
     }
 }
